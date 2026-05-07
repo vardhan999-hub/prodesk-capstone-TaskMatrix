@@ -1,0 +1,99 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "Harsha Vardhan",
+      "email": "harsha@taskmatrix.com",
+      "password": "password123",
+      "role": "admin",
+      "avatar": "HV"
+    },
+    {
+      "id": "u2",
+      "name": "Ravi Kumar",
+      "email": "ravi@taskmatrix.com",
+      "password": "password123",
+      "role": "member",
+      "avatar": "RK"
+    }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "name": "Project Alpha",
+      "description": "Main product sprint",
+      "status": "active"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "projectId": "p1",
+      "title": "Design login UI",
+      "status": "inProgress",
+      "priority": "high",
+      "assigneeId": "u1",
+      "dueDate": "2026-05-15",
+      "tags": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "t2",
+      "projectId": "p1",
+      "title": "Kanban drag and drop",
+      "status": "review",
+      "priority": "high",
+      "assigneeId": "u2",
+      "dueDate": "2026-05-15",
+      "tags": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "t3",
+      "projectId": "p1",
+      "title": "Zustand setup",
+      "status": "inProgress",
+      "priority": "medium",
+      "assigneeId": "u1",
+      "dueDate": "2026-05-15",
+      "tags": [
+        "state"
+      ],
+      "description": ""
+    },
+    {
+      "id": "t4",
+      "projectId": "p1",
+      "title": "Project setup",
+      "status": "done",
+      "priority": "low",
+      "assigneeId": "u2",
+      "dueDate": "2026-05-10",
+      "tags": [
+        "setup"
+      ]
+    },
+    {
+      "id": "4cmC3MC9X6E",
+      "projectId": "p1",
+      "title": "s",
+      "description": "",
+      "priority": "medium",
+      "status": "todo",
+      "dueDate": "",
+      "assigneeId": "u1",
+      "tags": []
+    }
+  ],
+  "activity": [
+    {
+      "id": "a1",
+      "userId": "u1",
+      "action": "created task Design login UI",
+      "timestamp": "2026-05-01T10:00:00Z"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
