@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { X } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 interface TaskModalProps {
   onClose: () => void
@@ -20,6 +21,7 @@ export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
   const handleSubmit = async () => {
     if (!title.trim()) return setError('Task title is required!')
     setLoading(true)
+
     const newTask = {
       id: 't' + Date.now(),
       projectId: 'p1',
@@ -31,11 +33,15 @@ export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
       assigneeId: 'u1',
       tags: tags ? tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
     }
-    await fetch('http://localhost:3001/tasks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newTask),
-    })
+
+    const { error: supabaseError } = await supabase.from('tasks').insert([newTask])
+
+    if (supabaseError) {
+      setError('Failed to create task. Please try again.')
+      setLoading(false)
+      return
+    }
+
     setLoading(false)
     onTaskAdded()
     onClose()
@@ -43,53 +49,37 @@ export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100, backdropFilter: 'blur(2px)' }} />
-
-      {/* Modal */}
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100 }} />
       <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'white', borderRadius: '20px', padding: '32px', width: '500px', zIndex: 101, boxShadow: '0 24px 64px rgba(0,0,0,0.2)', fontFamily: 'Segoe UI, sans-serif' }}>
 
-        {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
           <div>
-            <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1a1a2e', margin: 0 }}>Create New Task</h2>
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1a1a2e', margin: 0 }}>Create New Task</h2>
             <p style={{ fontSize: '13px', color: '#888', margin: '4px 0 0' }}>Fill in the details below</p>
           </div>
-          <button onClick={onClose} style={{ background: '#f5f5f5', border: 'none', borderRadius: '8px', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+          <button onClick={onClose} style={{ background: '#f5f5f5', border: 'none', borderRadius: '8px', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <X size={16} />
           </button>
         </div>
 
-        {/* Title */}
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ fontSize: '13px', fontWeight: '600', color: '#444', display: 'block', marginBottom: '6px' }}>Task Title *</label>
-          <input
-            value={title}
-            onChange={(e) => { setTitle(e.target.value); setError('') }}
+          <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Task Title *</label>
+          <input value={title} onChange={(e) => { setTitle(e.target.value); setError('') }}
             placeholder="e.g. Design the login page"
-            style={{ width: '100%', border: `1.5px solid ${error ? '#e53935' : '#e8eaed'}`, borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Segoe UI, sans-serif' }}
-            onFocus={(e) => e.target.style.borderColor = '#6c63ff'}
-            onBlur={(e) => e.target.style.borderColor = error ? '#e53935' : '#e8eaed'}
-          />
+            style={{ width: '100%', border: `1.5px solid ${error ? '#e53935' : '#e8eaed'}`, borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Segoe UI, sans-serif' }} />
           {error && <p style={{ color: '#e53935', fontSize: '12px', margin: '4px 0 0' }}>{error}</p>}
         </div>
 
-        {/* Description */}
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ fontSize: '13px', fontWeight: '600', color: '#444', display: 'block', marginBottom: '6px' }}>Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="What needs to be done?"
-            rows={3}
-            style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'Segoe UI, sans-serif' }}
-          />
+          <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Description</label>
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)}
+            placeholder="What needs to be done?" rows={3}
+            style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', resize: 'none', boxSizing: 'border-box', fontFamily: 'Segoe UI, sans-serif' }} />
         </div>
 
-        {/* Priority + Status */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
           <div>
-            <label style={{ fontSize: '13px', fontWeight: '600', color: '#444', display: 'block', marginBottom: '6px' }}>Priority</label>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Priority</label>
             <select value={priority} onChange={(e) => setPriority(e.target.value)}
               style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', background: 'white', fontFamily: 'Segoe UI, sans-serif' }}>
               <option value="high">🔴 High</option>
@@ -98,7 +88,7 @@ export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
             </select>
           </div>
           <div>
-            <label style={{ fontSize: '13px', fontWeight: '600', color: '#444', display: 'block', marginBottom: '6px' }}>Column</label>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Column</label>
             <select value={status} onChange={(e) => setStatus(e.target.value)}
               style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', background: 'white', fontFamily: 'Segoe UI, sans-serif' }}>
               <option value="todo">To Do</option>
@@ -109,28 +99,26 @@ export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
           </div>
         </div>
 
-        {/* Due Date + Tags */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '28px' }}>
           <div>
-            <label style={{ fontSize: '13px', fontWeight: '600', color: '#444', display: 'block', marginBottom: '6px' }}>Due Date</label>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Due Date</label>
             <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
               style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Segoe UI, sans-serif' }} />
           </div>
           <div>
-            <label style={{ fontSize: '13px', fontWeight: '600', color: '#444', display: 'block', marginBottom: '6px' }}>Tags (comma separated)</label>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Tags</label>
             <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="frontend, sprint-3"
               style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Segoe UI, sans-serif' }} />
           </div>
         </div>
 
-        {/* Buttons */}
         <div style={{ display: 'flex', gap: '12px' }}>
           <button onClick={onClose}
-            style={{ flex: 1, padding: '13px', borderRadius: '10px', border: '1.5px solid #e8eaed', background: 'white', color: '#555', fontSize: '14px', fontWeight: '600', cursor: 'pointer', fontFamily: 'Segoe UI, sans-serif' }}>
+            style={{ flex: 1, padding: '13px', borderRadius: '10px', border: '1.5px solid #e8eaed', background: 'white', color: '#555', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'Segoe UI, sans-serif' }}>
             Cancel
           </button>
           <button onClick={handleSubmit} disabled={loading}
-            style={{ flex: 1, padding: '13px', borderRadius: '10px', border: 'none', background: loading ? '#aaa' : '#1a1a2e', color: 'white', fontSize: '14px', fontWeight: '600', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'Segoe UI, sans-serif', transition: 'background 0.2s' }}
+            style={{ flex: 1, padding: '13px', borderRadius: '10px', border: 'none', background: loading ? '#aaa' : '#1a1a2e', color: 'white', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'Segoe UI, sans-serif' }}
             onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = '#6c63ff' }}
             onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = '#1a1a2e' }}>
             {loading ? 'Creating...' : '✓ Create Task'}
