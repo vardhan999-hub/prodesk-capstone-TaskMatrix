@@ -50,6 +50,12 @@ Frontend Intern
 
 ---
 
+## Demo Video
+
+[Watch Project Demo](https://drive.google.com/file/d/1DcGXMr8U6NYKYOKT4BDTccaAw8Itb9Zt/view?usp=sharing)
+
+---
+
 ## Figma Design
 
 [View TaskMatrix Figma Design](https://www.figma.com/design/qFNHYq04MLfDN9EeTMDNfx/TaskMatrix-Capstone?node-id=0-1&t=WryPBVim6PfYXV6O-1)
@@ -76,11 +82,11 @@ Frontend Intern
 
 ## Authentication Flow
 
-User visits app
-→ Redirected to /login
-→ Login with Supabase Auth
-→ Session stored in Zustand with persistence
-→ Redirected to /dashboard
+User visits app  
+→ Redirected to /login  
+→ Login with Supabase Auth  
+→ Session stored in Zustand with persistence  
+→ Redirected to /dashboard  
 → Protected — no session means redirect to /login
 
 ---
@@ -93,7 +99,6 @@ cd prodesk-capstone-TaskMatrix
 npm install
 json-server --watch data/db.json --port 3001
 npm run dev
-```
 
 Open browser at http://localhost:3000
 
