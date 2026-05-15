@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-
+import { Task, TaskPriority, TaskStatus } from '@/types/task'
 interface TaskDetailModalProps {
-  task: any
+  task: Task
   onClose: () => void
   onTaskUpdated: () => void
 }
 
-const PRIORITY_STYLE: any = {
+const PRIORITY_STYLE: Record<TaskPriority, { background: string; color: string }> = {
   high: { background: '#fce4e4', color: '#c62828' },
   medium: { background: '#fff8e1', color: '#f57f17' },
   low: { background: '#e8f5e9', color: '#2e7d32' },
