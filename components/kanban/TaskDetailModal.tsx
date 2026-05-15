@@ -16,7 +16,11 @@ const PRIORITY_STYLE: Record<TaskPriority, { background: string; color: string }
   low: { background: '#e8f5e9', color: '#2e7d32' },
 }
 
-const STATUS_OPTIONS = [
+const STATUS_OPTIONS: {
+  value: TaskStatus
+  label: string
+  color: string
+}[] = [
   { value: 'todo', label: 'To Do', color: '#666' },
   { value: 'inProgress', label: 'In Progress', color: '#e65100' },
   { value: 'review', label: 'Review', color: '#1565c0' },
@@ -30,8 +34,12 @@ export default function TaskDetailModal({
 }: TaskDetailModalProps) {
   const [title, setTitle] = useState(task.title)
   const [description, setDescription] = useState(task.description || '')
-  const [priority, setPriority] = useState(task.priority)
-  const [status, setStatus] = useState(task.status)
+ const [priority, setPriority] = useState<TaskPriority>(
+  task.priority
+)
+  const [status, setStatus] = useState<TaskStatus>(
+  task.status
+)
   const [dueDate, setDueDate] = useState(task.dueDate || '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
