@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { useAuthStore } from '@/store/authStore'
+import { TaskPriority, TaskStatus } from '@/types/task'
 
 interface TaskModalProps {
   onClose: () => void
@@ -11,26 +13,26 @@ interface TaskModalProps {
 export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [priority, setPriority] = useState('medium')
-  const [status, setStatus] = useState('todo')
+  const [priority, setPriority] = useState<TaskPriority>('medium')
+  const [status, setStatus] = useState<TaskStatus>('todo')
   const [dueDate, setDueDate] = useState('')
   const [tags, setTags] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { user } = useAuthStore()
 
   const handleSubmit = async () => {
     if (!title.trim()) return setError('Task title is required!')
     setLoading(true)
 
     const newTask = {
-      id: 't' + Date.now(),
-      projectId: 'p1',
+      userId: user?.id,
+      assigneeId: user?.id,
       title: title.trim(),
       description: description.trim(),
       priority,
       status,
-      dueDate,
-      assigneeId: 'u1',
+      dueDate: dueDate || null,
       tags: tags ? tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
     }
 
@@ -80,7 +82,7 @@ export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
           <div>
             <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Priority</label>
-            <select value={priority} onChange={(e) => setPriority(e.target.value)}
+            <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}
               style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', background: 'white', fontFamily: 'Segoe UI, sans-serif' }}>
               <option value="high">🔴 High</option>
               <option value="medium">🟡 Medium</option>
@@ -89,7 +91,7 @@ export default function TaskModal({ onClose, onTaskAdded }: TaskModalProps) {
           </div>
           <div>
             <label style={{ fontSize: '13px', fontWeight: 600, color: '#444', display: 'block', marginBottom: '6px' }}>Column</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}
+            <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}
               style={{ width: '100%', border: '1.5px solid #e8eaed', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', outline: 'none', background: 'white', fontFamily: 'Segoe UI, sans-serif' }}>
               <option value="todo">To Do</option>
               <option value="inProgress">In Progress</option>
