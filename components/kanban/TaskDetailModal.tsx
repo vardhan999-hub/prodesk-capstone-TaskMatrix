@@ -175,9 +175,7 @@ export default function TaskDetailModal({
 
             <input
               value={title}
-              onChange={(e) =>
-  setPriority(e.target.value as TaskPriority)
-}
+              onChange={(e) => setTitle(e.target.value)}
               style={{
                 fontSize: '18px',
                 fontWeight: 700,
@@ -391,7 +389,7 @@ export default function TaskDetailModal({
               <select
                 value={priority}
                 onChange={(e) =>
-                  setPriority(e.target.value)
+                  setPriority(e.target.value as TaskPriority)
                 }
                 style={{
                   width: '100%',
